@@ -1,4 +1,16 @@
 ﻿
+/*
+    MyCustomPublisher.cs - Custom Publisher created for an tutorial about
+        creating custom publishers
+        
+        -brad.antoniewicz@foundstone.com
+
+    I dont know what all the legal crap below says, but if you ask me, you can give this
+    to anyone you want..  :)
+*/
+
+
+
 //
 // Copyright (c) Michael Eddington
 //
@@ -20,6 +32,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
 
 using System;
 using System.Collections.Generic;
