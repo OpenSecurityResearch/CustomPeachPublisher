@@ -1,0 +1,23 @@
+Custom Peach Publisher Tutorial Accessory Code 
+By Brad Antoniewicz
+brad.antoniewicz@foundstone.com
+--------------------------------------------------
+
+This code was written for a tutorial on creating
+custom Peach Fuzzer Publishers. 
+
+The tutorial can be found on http://blog.opensecurityresearch.com
+
+To compile:
+
+dmcs MyCustomPublisher.cs -out:MyCustomPublisher.dll -target:library -r:Peach.Core.dll,NLog.dll
+
+Files:
+    MyCustomPublisher.cs - C# Source code for the publisher
+    MyCustomPublisher.dll - Compiled Publisher (can drop into peach binary folder)
+    MyCustomPublisherDataModel.xml - PeachPit for invoking it
+
+
+
+
+Enjoy!

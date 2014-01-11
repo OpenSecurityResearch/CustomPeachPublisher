@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Peach xmlns="http://peachfuzzer.com/2012/Peach" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://peachfuzzer.com/2012/Peach /peach/peach.xsd" author="Brad.Antoniewicz@foundstone.com">
+
+    <!--
+        Sample DataModel to be used with MyCustomPublisher decribed in
+        http://blog.opensecurityresearch.com
+
+        Brad Antoniewicz
+        Foundstone
+    -->
+
+    <!--
+        This will be encapsulated within UDP and ABC Proto
+    -->
+
+    <DataModel name="CustomProtocol">
+        <Blob name="CustomProtocolData" value="SomeSuperFancyDataThatCustomProtocolSends"/>
+    </DataModel>
+
+    <StateModel name="CustomProtocolOutput" initialState="SendData">
+        <State name="SendData">
+            <!--
+                We've only defined a unique output action for our publisher so
+                this is the only Action type that will actually include 
+                ABC Proto. 
+
+                This is linked to our OnOutput() function within the Publisher
+            -->
+            <Action type="output"> 
+                <DataModel ref="CustomProtocol"/>
+            </Action>
+        </State>
+    </StateModel>
+
+    <Test name="Default">
+        <StateModel ref="CustomProtocolOutput"/>
+        
+        <!--
+            This is where we invoke our custom Abc Proto Publisher!
+        -->
+        <Publisher class="MyCustomPublisher">
+            <Param name="Host" value="10.219.1.207"/>
+            <Param name="Port" value="12345"/>
+        </Publisher>
+    </Test>
+</Peach>
+
+
