@@ -49,6 +49,7 @@ namespace Peach.Core.Publishers
 	[Publisher("MyCustomPublisher", true)]
 	[Parameter("Host", typeof(string), "Hostname or IP address of remote host")]
 	[Parameter("Port", typeof(ushort), "Destination port number", "0")]
+    [Parameter("StrictLength", typeof(bool), "Enforce the ABC Proto Length Restrictions (may limit fuzz cases)", "true")]
 	[Parameter("Timeout", typeof(int), "How many milliseconds to wait for data/connection (default 3000)", "3000")]
 	[Parameter("Interface", typeof(IPAddress), "IP of interface to bind to", "")]
 	[Parameter("SrcPort", typeof(ushort), "Source port number", "0")]
@@ -57,8 +58,10 @@ namespace Peach.Core.Publishers
 	public class MyCustomPublisher: SocketPublisher
 	{
 		private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
-		protected override NLog.Logger Logger { get { return logger; } }
+		protected override NLog.Logger Logger { get { return logger; } } 
 		private IPEndPoint _remote;
+        
+        public bool StrictLength { get; set; }
 
 		public MyCustomPublisher(Dictionary<string, Variant> args)
 			: base("Udp", args)
@@ -98,12 +101,27 @@ namespace Peach.Core.Publishers
                 Data is variable length
             */
 
-            if (data.Length > 65535 - 4 || data.Length <= 0)
-                throw new PeachException("Abc Proto data length exceeds field length!");
-
             // Calculate the Length of the Entire Encapsulated Packet (Data + Abc Proto Hdr Len [2 bytes] + Abc Proto Len [2 bytes]
             int totalPktLen = (int)data.Length + 4;
 
+            if (StrictLength) { 
+                /*
+                    Here we're restricting the size of the mutated data. This is an important item to 
+                    note. Long string mutations are a major part of fuzzing, and by implementing this 
+                    sort of logic in our custom publisher, we're limiting our test cases. It might
+                    be a better approach to ignore this length restriction.. but i'll leave that up
+                    to the user via the StrictLength parameter. 
+                */
+                if (totalPktLen > 65535) {
+                    Logger.Debug("ABC Proto Max Packet Length Reached, capping at 65535");
+                    totalPktLen = 65535; 
+                }
+
+                if ( totalPktLen <= 0 ) {
+                    Logger.Debug("ABC Proto Min PacketLength Reached, just setting to 4 to account for header and length fields");
+                    totalPktLen = 4;
+                }
+            }
             // Abc Proto Header - 1234 indicates the start of an abcproto packet
             byte[] abcProtoHdr = { 0x12, 0x34 } ;
 

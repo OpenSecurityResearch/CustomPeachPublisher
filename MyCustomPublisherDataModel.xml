@@ -36,13 +36,13 @@
 
     <Test name="Default">
         <StateModel ref="CustomProtocolOutput"/>
-        
         <!--
             This is where we invoke our custom Abc Proto Publisher!
         -->
         <Publisher class="MyCustomPublisher">
             <Param name="Host" value="10.219.1.207"/>
             <Param name="Port" value="12345"/>
+            <Param name="StrictLength" value="true"/> <!-- true is default -->
         </Publisher>
     </Test>
 </Peach>
